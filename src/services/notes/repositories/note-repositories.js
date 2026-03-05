@@ -63,6 +63,7 @@ class NoteRepositories {
     return result.rows[0];
   }
 
+  /* Akan menyebabkan error 403 pada testing Notes -> Delete note, yang seharusnya 404 */
   async verifyNoteOwner(id, owner) {
     const query = {
       text: 'SELECT * FROM notes WHERE id = $1 AND owner = $2',

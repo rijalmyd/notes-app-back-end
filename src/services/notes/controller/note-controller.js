@@ -74,17 +74,17 @@ export const deleteNoteById = async (req, res, next) => {
   const { id } = req.params;
   const { id: owner } = req.user;
 
-  const isOwner = await NoteRepositories.verifyNoteOwner(id, owner);
+  const note = await NoteRepositories.getNoteById(id);
 
-  if (!isOwner) {
+  if (!note) {
+    return next(new NotFoundError('Catatan tidak ditemukan'));
+  }
+
+  if (note.owner !== owner) {
     return next(new AuthorizationError('Anda tidak berhak mengakses resource ini'));
   }
 
   const deletedNote = await NoteRepositories.deleteNote(id);
-
-  if (!deletedNote) {
-    return next(new NotFoundError('Catatan tidak ditemukan'));
-  }
 
   return response(res, 200, 'Catatan berhasil dihapus', deletedNote);
 };
